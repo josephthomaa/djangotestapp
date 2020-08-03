@@ -24,3 +24,10 @@ class MovieRatingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = ["id", "title", "ratings"]
+
+
+class MovieSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Movie
+        fields = ["id", "title", "genres"]
