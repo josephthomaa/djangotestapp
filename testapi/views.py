@@ -1,3 +1,5 @@
+import requests
+import random
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -51,3 +53,21 @@ class MovieSearchView(generics.ListAPIView):
     serializer_class = MovieSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['title']
+
+
+class ThirdPartyApiView(APIView):
+
+    def get(self, request):
+        resp = requests.get("https://jsonblob.com/api/24ce4f7a-ad79-11ea-95e6-5df0b694a869")
+        if resp.status_code == 200:
+            return Response({"Data":resp.json()}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Data":''}, status=status.HTTP_200_OK)
+
+
+class AddMovieView(APIView):
+    
+    def post(self, request):
+        m = Movie(title=f'Test_{random.randint(700,1000)}', genres='Test')
+        m.save()
+        return Response({"Message":"Success"}, status=status.HTTP_200_OK)
