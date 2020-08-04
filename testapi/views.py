@@ -70,7 +70,6 @@ class ThirdPartyApiView(APIView):
 class AddMovieView(CreateAPIView):
     serializer_class = MovieSerializer
     parser_classes = [MultiPartParser]
-    queryset = Movie.objects.all()
     http_method_names = ["post"]
 
     def create(self, request, *args, **kwargs):
