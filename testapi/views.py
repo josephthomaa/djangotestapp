@@ -4,6 +4,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics, filters
+from rest_framework.generics import CreateAPIView
+from rest_framework.parsers import MultiPartParser
 from testapi.models import User, Movie, UserRatings
 from testapi.serializers import MovieRatingsSerializer, MovieSerializer
 
@@ -65,9 +67,17 @@ class ThirdPartyApiView(APIView):
             return Response({"Data":''}, status=status.HTTP_200_OK)
 
 
-class AddMovieView(APIView):
-    
-    def post(self, request):
-        m = Movie(title=f'Test_{random.randint(700,1000)}', genres='Test')
-        m.save()
-        return Response({"Message":"Success"}, status=status.HTTP_200_OK)
+class AddMovieView(CreateAPIView):
+    serializer_class = MovieSerializer
+    parser_classes = [MultiPartParser]
+    queryset = Movie.objects.all()
+    http_method_names = ["post"]
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"Message":"Success"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Message":"Failed"}, status=status.HTTP_200_OK)
